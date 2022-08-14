@@ -6,6 +6,10 @@ const ProductList= props => {
 
     const {products, setProducts} = props;
 
+    const removeFromDom = productID => {
+        setProducts(products.filter(product => product._id != productID));
+    }
+
     useEffect( () => {
         axios.get('http://localhost:8000/products')
         .then( res => {
@@ -17,6 +21,15 @@ const ProductList= props => {
         })
     }, [])
 
+    const deleteProduct = productID => {
+        axios.delete(`http://localhost:8000/products/${productID}`)
+            .then( res => {
+                console.log(res)
+                removeFromDom(productID)
+            })
+            .catch( err => console.log(err) );
+    }
+
     return (
         <div>
             {
@@ -24,6 +37,7 @@ const ProductList= props => {
                     return(
                         <div key={product._id}>
                             <Link to={`/products/${product._id}`}>{product.title}</Link>
+                            <button onClick={ e => {deleteProduct(product._id)} }>Delete</button>
                         </div>
                     )
                 })
